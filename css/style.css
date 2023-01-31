@@ -1,0 +1,18 @@
+h1 {
+    text-align: center;
+}
+
+body{
+    background-color: antiquewhite;
+}
+
+#cols {
+    display: flex;
+}
+
+.col {
+    width: 33.33%;
+    height: 850px;
+    text-align: center;
+    border: 2px solid black;
+}
