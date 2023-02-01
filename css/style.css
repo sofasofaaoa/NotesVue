@@ -11,6 +11,31 @@ h1 {
     width: 300px;
     font-size: 28px;
 }
+.tasks{
+    display: flex;
+    list-style-type: none;
+    margin: 0px;
+    align-items: center;
+}
+
+
+.cards{
+    list-style-type: none;
+    font-size: 14px;
+    width: 90%;
+    background-color: burlywood;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+ul {
+    padding-left: 20px;
+}
+
+p{
+    margin: 5px;
+    text-wrap: normal;
+}
 
 #cols {
     display: flex;
@@ -18,7 +43,7 @@ h1 {
 
 .col {
     width: 33.33%;
-    height: 750px;
+    height: 850px;
     text-align: center;
-    border: 2px solid black;
+    border: 2px solid gray;
 }
