@@ -18,6 +18,9 @@ h1 {
     align-items: center;
 }
 
+.completed{
+    text-decoration: line-through;
+}
 
 .cards{
     list-style-type: none;
