@@ -3,7 +3,8 @@ let eventBus = new Vue()
 Vue.component('cols', {
     template:`
     <div id="cols">
-        <newcard>{{errors}}</newcard>
+        <p class="error" v-for="error in errors">{{error}}</p>
+        <newcard></newcard>
         <div class="col">
             <ul>
                 <li class="cards" v-for="card in column1" ><p>{{ card.title }}</p>
@@ -11,7 +12,8 @@ Vue.component('cols', {
                         <ul>
                             <li class="tasks" v-for="t in card.subtasks" v-if="t.title != null">
                                 <input @click="t.completed = true" 
-                                class="checkbox" type="checkbox">
+                                class="checkbox" type="checkbox"
+                                :disabled="t.completed">
                                 <p :class="{completed: t.completed}">{{t.title}}</p>
                             </li>
                         </ul>
@@ -36,7 +38,9 @@ Vue.component('cols', {
     },
     mounted() {
         eventBus.$on('card-submitted', card => {
+            this.errors = []
             if (this.column1.length < 3){
+
                 this.column1.push(card)
             } else {
                 this.errors.push("You can't add a new card now.")
@@ -64,7 +68,7 @@ Vue.component('newcard', {
     <form class="addform" @submit.prevent="onSubmit">
         <p>
             <label for="title">Title</label>
-            <input class="title" v-model="title" maxlength="30" type="text" placeholder="title">
+            <input class="title" required v-model="title" maxlength="30" type="text" placeholder="title">
         </p>
         <div>
             <input class="checkbox" type="checkbox">

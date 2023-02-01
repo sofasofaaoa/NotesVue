@@ -21,6 +21,11 @@ h1 {
 .completed{
     text-decoration: line-through;
 }
+.error{
+    position: fixed;
+    top: 400px;
+    color: red;
+}
 
 .cards{
     list-style-type: none;
