@@ -7,16 +7,7 @@ Vue.component('cols', {
         <newcard></newcard>
         <div class="col">
             <ul>
-                <li class="cards" v-for="card in column1"><p>{{ card.title }}</p>
-                    <ul>
-                        <li class="tasks" v-for="t in card.subtasks" v-if="t.title != null">
-                            <input @click="newStatus1(card, t)"
-                            class="checkbox" type="checkbox"
-                            :disabled="t.completed">
-                            <p :class="{completed: t.completed}">{{t.title}}</p>
-                        </li>
-                    </ul>
-                </li>
+                <li v-for="card in column1"></li>
             </ul>
         </div>
         <div class="col">
@@ -60,69 +51,22 @@ Vue.component('cols', {
         }
     },
     methods: {
-        newStatus1(card, t) {
-            t.completed = true
-            let count = 0
-            card.status = 0
-            this.errors = []
-            for (let i = 0; i < 5; i++) {
-                if (card.subtasks[i].title != null) {
-                    count++
-                }
-            }
-
-            for (let i = 0; i < count; i++) {
-                if (card.subtasks[i].completed === true) {
-                    card.status++
-                }
-            }
-            if (card.status/count*100 >= 50 && card.status/count*100 < 100 && this.column2.length < 5) {
-                    this.column2.push(card)
-                    this.column1.splice(this.column1.indexOf(card), 1)
-            } else if (this.column2.length === 5) {
-                this.errors.push('You need to complete card in the second column to add new card or complete card in the first column')
-                for (let i = 0; i < 3; i++) {
-                    for (let j = 0; j < 5; j++) {
-                        if (this.card[i].subtasks[j].title != null) {
-                            this.column1.card[i].subtasks[j].disabled = true
-                        }
-                    }
-                }
-            }
-
-        },
-        newStatus2(card, t) {
-            t.completed = true
-            let count = 0
-            card.status = 0
-            for (let i = 0; i < 5; i++) {
-                if (card.subtasks[i].title != null) {
-                    count++
-                }
-            }
-
-            for (let i = 0; i < count; i++) {
-                if (card.subtasks[i].completed === true) {
-                    card.status++
-                }
-            }
-            if (card.status/count*100 === 100) {
-                this.column3.push(card)
-                this.column2.splice(this.column2.indexOf(card), 1)
-                card.date = new Date()
-            }
-
+        changeModal() {
+            this.addCard = !this.addCard
+            console.log(this.addCard)
         }
     },
     mounted() {
-        eventBus.$on('card-submitted', card => {
-            this.errors = []
+        eventBus.$on('addColumn1', card => {
             if (this.column1.length < 3){
-
                 this.column1.push(card)
-            } else {
-                this.errors.push("You can't add a new card now.")
             }
+        })
+        eventBus.$on('addColumn2', card => {
+            this.column2.push(card)
+        })
+        eventBus.$on('addColumn3', card => {
+            this.column3.push(card)
         })
     },
     props: {
@@ -159,6 +103,107 @@ Vue.component('cols', {
     }
 })
 
+Vue.component('column1', {
+    template: `
+        <div class="column">
+            <div class="card" v-for="card in column1">
+                <note :card="card" :changeCompleted="changeCompleted"></note>
+            </div>
+        </div>
+    `,
+    props: {
+        column1: {
+            type: Array,
+        },
+        column2: {
+            type: Array,
+        },
+    },
+    methods: {
+        changeCompleted(card) {
+            let allTask = 0
+            for(let i = 0; i < 5; i++){
+                if (card.subtasks[i].title != null) {
+                    allTask++
+                }
+            }
+            if ((card.status / allTask) * 100 >= 50 && this.column2.length < 5) {
+                eventBus.$emit('addColumn2', card)
+                this.column1.splice(this.column1.indexOf(card), 1)
+            }
+        },
+    },
+})
+
+Vue.component('column2', {
+    template: `
+        <div class="column">
+            <div class="card" v-for="card in column2">
+                <note :card="card" :changeCompleted="changeCompleted"></note>
+            </div>
+        </div>
+    `,
+    props: {
+        column2: {
+            type: Array,
+        },
+    },
+    methods: {
+        changeCompleted(card) {
+            let allTask = 0
+            for(let i = 0; i < 5; i++){
+                if (card.task[i].title != null) {
+                    allTask++
+                }
+            }
+            if ((card.status / allTask) * 100 === 100) {
+                eventBus.$emit('addColumn3', card)
+                this.column2.splice(this.column2.indexOf(card), 1)
+                card.date = new Date().toLocaleString();
+            }
+        }
+    }
+})
+
+Vue.component('column3', {
+    template: `
+        <div class="column">
+            <div class="card" v-for="card in column3">
+                <note :card="card"></note>
+            </div>
+        </div>
+    `,
+    props: {
+        column3: {
+            type: Array
+        }
+    }
+})
+
+Vue.component('note', {
+    template: `
+        <div>
+            <h2>{{card.title}}</h2>  
+            <ul>
+                <li
+                    v-for="tsk in card.subtasks" 
+                    v-if="tsk.title != null"
+                    @click="tsk.completed = true, card.status += 1, changeCompleted(card)"
+                    :class="{ completedTask: tsk.completed }"
+                >{{tsk.title}}</li>
+                <p>{{ card.date }}</p>
+            </ul>
+        </div>
+    `,
+    props: {
+        card: {
+            type: Object
+        },
+        changeCompleted: {
+            type: Function
+        },
+    }
+})
 
 Vue.component('newcard', {
     template: `
@@ -168,23 +213,18 @@ Vue.component('newcard', {
             <input class="title" required v-model="title" maxlength="30" type="text" placeholder="title">
         </p>
         <div>
-            <input class="checkbox" type="checkbox">
             <input required id="subtask1" v-model="subtask1" maxlength="30" placeholder="subtask">
         </div>
         <div>
-            <input class="checkbox" type="checkbox">
             <input required id="subtask2" v-model="subtask2" maxlength="30" placeholder="subtask">
         </div>
         <div>
-            <input class="checkbox" type="checkbox">
             <input required id="subtask3" v-model="subtask3" maxlength="30" placeholder="subtask">
         </div>
         <div>
-            <input class="checkbox" type="checkbox">
             <input  id="subtask4" v-model="subtask4" maxlength="30" placeholder="subtask">
         </div>
         <div>
-            <input class="checkbox" type="checkbox">
             <input  id="subtask5" v-model="subtask5" maxlength="30" placeholder="subtask">
         </div>
         <button type="submit">Add a card</button>
