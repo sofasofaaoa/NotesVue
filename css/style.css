@@ -25,6 +25,8 @@ h1 {
     position: fixed;
     top: 400px;
     color: red;
+    width: 200px;
+    text-wrap: normal;
 }
 
 .cards{
