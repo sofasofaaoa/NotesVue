@@ -67,7 +67,7 @@ Vue.component('col1', {
     `,
     props: {
         column1: {
-            type: Array,
+            type: Array
         },
         column2: {
             type: Array,
