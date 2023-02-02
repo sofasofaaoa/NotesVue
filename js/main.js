@@ -41,8 +41,12 @@ Vue.component('cols', {
         })
         eventBus.$on('addColumn3', card => {
             this.column3.push(card)
-            this.column2.splice(this.column1.indexOf(card), 1)
+            this.column2.splice(this.column2.indexOf(card), 1)
         })
+        eventBus.$on('addColumn1-3', card => {
+            this.column3.push(card)
+            this.column1.splice(this.column1.indexOf(card), 1)
+            })
     },
     computed: {
 
@@ -53,7 +57,7 @@ Vue.component('col1', {
     template: `
         <div class="col">
             <div class="cards" v-for="card in column1">
-                <p>{{card.title}}</p>
+                <h3>{{card.title}}</h3>
                 <ul>
                     <li class="tasks" v-for="task in card.subtasks" 
                     v-if="task.title != null" 
@@ -67,7 +71,7 @@ Vue.component('col1', {
     `,
     props: {
         column1: {
-            type: Array
+            type: Array,
         },
         column2: {
             type: Array,
@@ -93,7 +97,10 @@ Vue.component('col1', {
             console.log(count)
             if ((card.status / count) * 100 >= 50) {
                 eventBus.$emit('addColumn2', card)
-
+            }
+            if ((card.status / count) * 100 === 100) {
+                card.date = new Date().toLocaleString()
+                eventBus.$emit('addColumn1-3', card)
             }
         },
     },
@@ -103,7 +110,7 @@ Vue.component('col2', {
     template: `
         <div class="col">
             <div class="cards" v-for="card in column2">
-                <p>{{card.title}}</p>
+                <h3>{{card.title}}</h3>
                 <ul>
                     <li class="tasks" v-for="task in card.subtasks" 
                     v-if="task.title != null" 
@@ -135,7 +142,6 @@ Vue.component('col2', {
             }
             if ((card.status / count) * 100 === 100) {
                 eventBus.$emit('addColumn3', card)
-                this.column2.splice(this.column2.indexOf(card), 1)
                 card.date = new Date().toLocaleString();
             }
         }
@@ -146,7 +152,7 @@ Vue.component('col3', {
     template: `
         <div class="col">
             <div class="cards" v-for="card in column3">
-                <p>{{card.title}}</p>
+                <h3>{{card.title}}</h3>
                 <ul>
                     <li class="tasks" v-for="task in card.subtasks" 
                     v-if="task.title != null" 
