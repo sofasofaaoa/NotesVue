@@ -36,7 +36,7 @@ Vue.component('cols', {
                 this.column2.push(card)
                 this.column1.splice(this.column1.indexOf(card), 1)
             } else {
-                this.errors.push("The second column cannot be supplemented with cards while there are 5 of them")
+                this.errors.push("There should be no more than five cards in the second column")
             }
         })
         eventBus.$on('addColumn3', card => {
