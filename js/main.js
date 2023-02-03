@@ -56,7 +56,7 @@ Vue.component('cols', {
 Vue.component('col1', {
     template: `
         <div class="col">
-            <div class="cards" v-for="card in column1">
+            <div class="cards" style="background-color: burlywood" v-for="card in column1">
                 <h3>{{card.title}}</h3>
                 <ul>
                     <li class="tasks" v-for="task in card.subtasks" 
@@ -109,7 +109,7 @@ Vue.component('col1', {
 Vue.component('col2', {
     template: `
         <div class="col">
-            <div class="cards" v-for="card in column2">
+            <div class="cards" style="background-color: lightblue" v-for="card in column2">
                 <h3>{{card.title}}</h3>
                 <ul>
                     <li class="tasks" v-for="task in card.subtasks" 
@@ -151,7 +151,7 @@ Vue.component('col2', {
 Vue.component('col3', {
     template: `
         <div class="col">
-            <div class="cards" v-for="card in column3">
+            <div class="cards" style="background-color: lightgreen" v-for="card in column3">
                 <h3>{{card.title}}</h3>
                 <ul>
                     <li class="tasks" v-for="task in card.subtasks" 
